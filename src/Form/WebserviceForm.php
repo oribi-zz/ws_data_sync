@@ -70,8 +70,6 @@ class WebserviceForm extends EntityForm {
 
     /** @var \Drupal\ws_data_sync\Entity\Webservice $webservice */
     $webservice = $this->entity;
-    //    ksm($webservice);
-    //    ksm($form_state);
     $form['label'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Label'),
