@@ -16,3 +16,12 @@ entity.feed.collection:
   parent: system.admin_structure
   weight: 99
 
+
+# Field Mapping menu items definition
+entity.field_mapping.collection:
+  title: 'Field Mapping'
+  route_name: entity.field_mapping.collection
+  description: 'List Field Mapping (bundles)'
+  parent: system.admin_structure
+  weight: 99
+

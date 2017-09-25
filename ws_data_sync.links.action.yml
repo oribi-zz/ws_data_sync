@@ -10,3 +10,9 @@ entity.feed.add_form:
   appears_on:
     - entity.feed.collection
 
+entity.field_mapping.add_form:
+  route_name: entity.field_mapping.add_form
+  title: 'Add Field Mapping'
+  appears_on:
+    - entity.field_mapping.collection
+
