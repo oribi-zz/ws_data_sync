@@ -22,6 +22,6 @@ ws_data_sync.webservice.*:
         type:
           type: string
           label: 'Auth type'
-        params:
+        credentials:
           type: mapping
-          label: 'Authentication params'
+          label: 'Authentication credentials'

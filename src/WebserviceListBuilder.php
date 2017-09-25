@@ -30,7 +30,7 @@ class WebserviceListBuilder extends ConfigEntityListBuilder {
   }
 
   public function getOperations(EntityInterface $entity) {
-    ksm(parent::getOperations($entity));
+//    ksm(parent::getOperations($entity));
     $operations =  parent::getOperations($entity);
     $operations['manage_feeds'] = [
       'title' => t('Manage feeds'),

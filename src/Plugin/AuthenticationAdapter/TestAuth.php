@@ -21,7 +21,7 @@ use Drupal\ws_data_sync\Plugin\AuthenticationAdapterBase;
  */
 class TestAuth extends AuthenticationAdapterBase {
 
-  public function getConfigParams() {
+  public function getCredentialParams() {
     $params = [
       't_user' => [
         '#type' => 'textfield',
@@ -36,19 +36,6 @@ class TestAuth extends AuthenticationAdapterBase {
         '#attributes' => ['name' => 'authentication[params][t_password]'],
       ],
     ];
-
-//    $params = [
-//      't_user' => [
-//        'type' => 'textfield',
-//        'title' => 'Test User',
-//        'length' => 64,
-//      ],
-//      't_password' => [
-//        'type' => 'textfield',
-//        'title' => 'Test Password',
-//        'length' => 64,
-//      ],
-//    ];
 
     return $params;
   }
