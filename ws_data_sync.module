@@ -1,0 +1,35 @@
+<?php
+
+/**
+ * @file
+ * Contains ws_data_sync.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function ws_data_sync_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the ws_data_sync module.
+    case 'help.page.ws_data_sync':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Synchronize data to and from webservices') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function ws_data_sync_theme() {
+  return [
+    'ws_data_sync' => [
+      'render element' => 'children',
+    ],
+  ];
+}

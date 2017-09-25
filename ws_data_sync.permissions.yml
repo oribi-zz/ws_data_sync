@@ -1,0 +1,7 @@
+
+manage feeds:
+  title: 'Manage feeds'
+  description: 'Allow management of feeds'
+manage webservices:
+  title: 'Manage webservices'
+  description: 'Allow management of webservices'

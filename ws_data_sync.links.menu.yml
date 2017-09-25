@@ -1,0 +1,18 @@
+
+# Webservice menu items definition
+entity.webservice.collection:
+  title: 'Webservice'
+  route_name: entity.webservice.collection
+  description: 'List Webservice (bundles)'
+  parent: system.admin_structure
+  weight: 99
+
+
+# Feed menu items definition
+entity.feed.collection:
+  title: 'Feed'
+  route_name: entity.feed.collection
+  description: 'List Feed (bundles)'
+  parent: system.admin_structure
+  weight: 99
+

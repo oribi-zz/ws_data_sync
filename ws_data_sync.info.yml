@@ -1,0 +1,5 @@
+name: Web service data syncronization
+type: module
+description: Synchronize data to and from web services
+core: 8.x
+package: Web services

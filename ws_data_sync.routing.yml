@@ -1,0 +1,2 @@
+route_callbacks:
+  - '\Drupal\ws_data_sync\Routing\FeedRoutes::routes'

@@ -1,0 +1,24 @@
+ws_data_sync.feed.*:
+  type: config_entity
+  label: 'Feed config'
+  mapping:
+    id:
+      type: string
+      label: 'ID'
+    label:
+      type: label
+      label: 'Label'
+    uuid:
+      type: string
+    local:
+      type: sequence
+      label: 'Local entity type'
+      sequence:
+        type: mapping
+        mapping:
+          type:
+            type: string
+            label: Entity collection
+          bundle:
+            type: string
+            label: Collection bundle

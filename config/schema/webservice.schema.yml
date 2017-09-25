@@ -1,0 +1,27 @@
+ws_data_sync.webservice.*:
+  type: config_entity
+  label: 'Webservice config'
+  mapping:
+    id:
+      type: string
+      label: 'ID'
+    label:
+      type: label
+      label: 'Label'
+    uuid:
+      type: string
+    url:
+      type: string
+      label: 'Url'
+    type:
+      type: string
+      label: 'Type'
+    authentication:
+      type: mapping
+      mapping:
+        type:
+          type: string
+          label: 'Auth type'
+        params:
+          type: mapping
+          label: 'Authentication params'

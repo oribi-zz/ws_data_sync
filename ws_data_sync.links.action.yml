@@ -1,0 +1,12 @@
+entity.webservice.add_form:
+  route_name: entity.webservice.add_form
+  title: 'Add Webservice'
+  appears_on:
+    - entity.webservice.collection
+
+entity.feed.add_form:
+  route_name: entity.feed.add_form
+  title: 'Add Feed'
+  appears_on:
+    - entity.feed.collection
+
