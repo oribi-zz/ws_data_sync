@@ -37,8 +37,9 @@ class FeedListBuilder extends ConfigEntityListBuilder {
    */
   public function buildHeader() {
     $header['label'] = $this->t('Feed');
-    $header['id'] = $this->t('Machine name');
+//    $header['id'] = $this->t('Machine name');
     $header['webservice'] = $this->t('Webservice');
+    $header['endpoint'] = $this->t('Endpoint');
     return $header + parent::buildHeader();
   }
 
@@ -47,9 +48,9 @@ class FeedListBuilder extends ConfigEntityListBuilder {
    */
   public function buildRow(EntityInterface $entity) {
     $row['label'] = $entity->label();
-    $row['id'] = $entity->id();
+//    $row['id'] = $entity->id();
     $row['webservice'] = $entity->getWebservice();
-    // You probably want a few more properties here...
+    $row['endpoint'] = $entity->getEndpoint();
     return $row + parent::buildRow($entity);
   }
 
@@ -71,16 +72,35 @@ class FeedListBuilder extends ConfigEntityListBuilder {
       ]),
     ];
 
-    $operations['manage_field_mappings'] = [
-      'title' => t('Manage field mappings'),
-      'weight' => -100,
-      'url' => Url::fromRoute('entity.field_mapping.collection', [
-        'webservice' => $this->request->get('webservice'),
-        'feed' => $entity->id()
-      ]),
-    ];
 
     unset($operations['translate']);
+    $feed_mapping_count = \Drupal::entityQuery('field_mapping')
+      ->condition('webservice', $entity->getWebservice())
+      ->condition('feed', $entity->id())
+      ->count()
+      ->execute();
+
+    if ($feed_mapping_count > 0) {
+      $operations['manage_field_mappings'] = [
+        'title' => t('Manage field mappings'),
+        'weight' => 0,
+        'url' => Url::fromRoute('entity.field_mapping.collection', [
+          'webservice' => $this->request->get('webservice'),
+          'feed' => $entity->id()
+        ]),
+      ];
+    } else {
+      $operations['add_field_mappings'] = [
+        'title' => t('Add field mapping'),
+        'weight' => 0,
+        'url' => Url::fromRoute('entity.field_mapping.add_form', [
+          'webservice' => $entity->getWebservice(),
+          'feed' => $entity->id(),
+        ]),
+      ];
+    }
+    uasort($operations, '\Drupal\Component\Utility\SortArray::sortByWeightElement');
+
 
     return $operations;
 
