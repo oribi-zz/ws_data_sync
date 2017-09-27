@@ -22,6 +22,9 @@ ws_data_sync.feed.*:
           bundle:
             type: string
             label: Collection bundle
+    endpoint:
+      type: string
+      label: Endpoint
     webservice:
       type: string
       label: Webservice

@@ -88,9 +88,16 @@ class Webservice extends ConfigEntityBase implements WebserviceInterface {
   protected $authentication;
 
   /**
-   * @var array
+   * @var string|null
    */
-//  protected $params;
+  protected $documentationLink;
+
+  /**
+   * @return null|string
+   */
+  public function getDocumentationLink() {
+    return $this->documentationLink;
+  }
 
   /**
    * @return string

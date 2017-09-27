@@ -50,6 +50,13 @@ class FeedForm extends EntityForm {
       '#required' => TRUE,
     ];
 
+    $form['endpoint'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Endpoint'),
+      '#default_value' => $feed->getEndpoint(),
+      '#required' => TRUE,
+    ];
+
     $form['webservice'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Webservice'),

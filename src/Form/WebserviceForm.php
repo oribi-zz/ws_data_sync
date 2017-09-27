@@ -111,7 +111,7 @@ class WebserviceForm extends EntityForm {
 //      ],
     ];
 
-    if (isset($authentication['type'])) {
+    if (isset($authentication['type']) && $authentication['type'] !== '') {
 //    if ($authentication['type'] !== '' || FALSE) {
       /** @var \Drupal\ws_data_sync\Plugin\AuthenticationAdapterInterface $authentication_plugin */
       $authentication_plugin = $this->authenticationAdapter->createInstance($authentication['type']);
@@ -152,6 +152,14 @@ class WebserviceForm extends EntityForm {
 //      '#empty_option'  => t('- select -'),
       '#description' => $this->t("Format of the remote data."),
       '#required' => TRUE,
+    ];
+
+    $form['documentation_link'] = [
+      '#type' => 'url',
+      '#title' => $this->t('Documentation'),
+      '#maxlength' => 255,
+      '#default_value' => $webservice->getDocumentationLink(),
+      '#description' => $this->t("Link to webservice documentation (optional)"),
     ];
 
     return $form;

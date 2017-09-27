@@ -19,6 +19,9 @@ ws_data_sync.webservice.*:
     format:
       type: string
       label: 'Format'
+    documentation_link:
+      type: string
+      label: 'Documentation link'
     authentication:
       type: mapping
       mapping:

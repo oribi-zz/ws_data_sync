@@ -65,6 +65,18 @@ class Feed extends ConfigEntityBase implements FeedInterface {
   protected $local;
 
   /**
+   * @var
+   */
+  protected $endpoint;
+
+  /**
+   * @return mixed
+   */
+  public function getEndpoint() {
+    return $this->endpoint;
+  }
+
+  /**
    * @var string
    */
   protected $webservice;
