@@ -41,7 +41,7 @@ class FieldMappingForm extends EntityForm {
       '#type' => 'textfield',
       '#title' => $this->t('Feed'),
       '#maxlength' => 255,
-      '#default_value' => $request->get('feed'),
+      '#default_value' => $request->get('feed')->id(),
       '#required' => TRUE,
     ];
 
@@ -49,7 +49,7 @@ class FieldMappingForm extends EntityForm {
       '#type' => 'textfield',
       '#title' => $this->t('Webservice'),
       '#maxlength' => 255,
-      '#default_value' => $request->get('webservice'),
+      '#default_value' => $request->get('webservice')->id(),
       '#required' => TRUE,
     ];
 
