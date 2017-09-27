@@ -9,19 +9,19 @@ entity.webservice.collection:
 
 
 # Feed menu items definition
-entity.feed.collection:
-  title: 'Feed'
-  route_name: entity.feed.collection
-  description: 'List Feed (bundles)'
-  parent: system.admin_structure
-  weight: 99
+#entity.feed.collection:
+#  title: 'Feed'
+#  route_name: entity.feed.collection
+#  description: 'List Feed (bundles)'
+#  parent: system.admin_structure
+#  weight: 99
 
 
 # Field Mapping menu items definition
-entity.field_mapping.collection:
-  title: 'Field Mapping'
-  route_name: entity.field_mapping.collection
-  description: 'List Field Mapping (bundles)'
-  parent: system.admin_structure
-  weight: 99
+#entity.field_mapping.collection:
+#  title: 'Field Mapping'
+#  route_name: entity.field_mapping.collection
+#  description: 'List Field Mapping (bundles)'
+#  parent: system.admin_structure
+#  weight: 99
 

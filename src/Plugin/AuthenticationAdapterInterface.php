@@ -9,6 +9,6 @@ use Drupal\Component\Plugin\PluginInspectionInterface;
  */
 interface AuthenticationAdapterInterface extends PluginInspectionInterface {
 
-  public function getCredentialParams();
+  public function getCredentialParams($authentication);
 
 }

@@ -10,3 +10,9 @@ ws_data_sync.field_mapping.*:
       label: 'Label'
     uuid:
       type: string
+    feed:
+      type: string
+      label: 'Feed'
+    webservice:
+      type: string
+      label: 'Webservice'

@@ -19,7 +19,7 @@ use Drupal\Core\Config\Entity\ConfigEntityBase;
  *       "delete" = "Drupal\ws_data_sync\Form\WebserviceDeleteForm"
  *     },
  *     "route_provider" = {
- *       "html" = "Drupal\ws_data_sync\WebserviceHtmlRouteProvider",
+ *       "html" = "Drupal\ws_data_sync\HtmlRouteProvider",
  *     },
  *   },
  *   config_prefix = "webservice",

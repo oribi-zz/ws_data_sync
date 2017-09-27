@@ -12,22 +12,22 @@ namespace Drupal\ws_data_sync\Plugin\AuthenticationAdapter;
 use Drupal\ws_data_sync\Plugin\AuthenticationAdapterBase;
 
 /**
- * Provides a API key authentication type.
+ * Provides a Json Web Token authentication type.
  *
  * @AuthenticationAdapter(
- *   id = "api_key",
- *   name = "API key"
+ *   id = "jwt",
+ *   name = "Json Web Token"
  * )
  */
-class ApiKey extends AuthenticationAdapterBase {
+class JsonWebToken extends AuthenticationAdapterBase {
 
   public function getCredentialParams($authentication) {
     $params = [
-      'key' => [
+      'placeholder' => [
         '#type' => 'textfield',
-        '#title' => 'API key',
+        '#title' => 'Placeholder',
         '#length' => 128,
-        '#default_value' => $authentication['credentials']['key'] ?? '',
+        '#default_value' => $authentication['credentials']['placeholder'] ?? '',
       ],
     ];
 

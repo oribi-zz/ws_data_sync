@@ -4,6 +4,7 @@ namespace Drupal\ws_data_sync;
 
 use Drupal\Core\Config\Entity\ConfigEntityListBuilder;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Url;
 
 /**
  * Provides a listing of Webservice entities.
@@ -30,12 +31,12 @@ class WebserviceListBuilder extends ConfigEntityListBuilder {
   }
 
   public function getOperations(EntityInterface $entity) {
-//    ksm(parent::getOperations($entity));
     $operations =  parent::getOperations($entity);
+
     $operations['manage_feeds'] = [
       'title' => t('Manage feeds'),
       'weight' => -10,
-      'url' => $entity->toUrl('manage-feeds'),
+      'url' => Url::fromRoute('entity.feed.collection', ['webservice' => $entity->id()]),
     ];
 
     return $operations;

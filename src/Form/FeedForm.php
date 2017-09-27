@@ -4,6 +4,8 @@ namespace Drupal\ws_data_sync\Form;
 
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Url;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Class FeedForm.
@@ -12,15 +14,10 @@ class FeedForm extends EntityForm {
 
   use ComplexKeyFormatterTrait;
 
-  /**
-   * {@inheritdoc}
-   */
-  public function form(array $form, FormStateInterface $form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state, Request $request = null) {
     $form = parent::form($form, $form_state);
 
-//    dsm($this->entity);
-//    dsm($this->getEntity()->getEntityType());
-//    dsm($this->getEntity()->getEntityType()->getKeys());
+    dpm($request);
 
     /** @var \Drupal\ws_data_sync\EntityTypeMapper $entity_type_map */
     $entity_type_map = \Drupal::service('ws_data_sync.entity_type_mapper');
@@ -50,16 +47,16 @@ class FeedForm extends EntityForm {
     $form['local'] = [
       '#type' => 'select',
       '#title' => $this->t('Local entity'),
-      '#options' => $type_options,
-      '#default_value' => self::toOption($feed->getLocal()),
+      '#options' => ['' => t('- Select -')] + $type_options,
+      '#default_value' => is_array($feed->getLocal()) ? self::toOption($feed->getLocal()) : '',
       '#required' => TRUE,
     ];
 
     $form['webservice'] = [
-      '#type' => 'select',
+      '#type' => 'textfield',
       '#title' => $this->t('Webservice'),
-      '#options' => $type_options,
-      '#default_value' => $feed->getWebservice(),
+      '#default_value' => $request->get('webservice'),
+//      '#default_value' => $feed->getWebservice(),
       '#required' => TRUE,
     ];
 
@@ -70,11 +67,11 @@ class FeedForm extends EntityForm {
    * {@inheritdoc}
    */
   public function save(array $form, FormStateInterface $form_state) {
+    /** @var \Drupal\ws_data_sync\Entity\Feed $feed */
     $feed = $this->entity;
-//    dsm($this->entity->getTypedData());
+
     // Massage colon separated 'local' value to array for structured config storage
-    $keys = self::getConfigPropertySequenceMappingKeys('local', $feed);
-//    $keys = self::getConfigPropertySequenceMappingKeys('local');
+    $keys = self::getConfigPropertySequenceMappingKeys('local', $feed->getEntityTypeId());
     if (count($keys) == count(explode(':', $form_state->getValue('local')))) {
       $local = self::toArray($form_state->getValue('local'), $keys);
       $status = $feed->set('local', $local)->save();
@@ -94,13 +91,8 @@ class FeedForm extends EntityForm {
           '%label' => $feed->label(),
         ]));
     }
-    $form_state->setRedirectUrl($feed->toUrl('collection'));
+    $webservice_feed_list = Url::fromRoute('entity.feed.collection', ['webservice' => $feed->getWebservice()]);
+    $form_state->setRedirectUrl($webservice_feed_list);
   }
-
-//  protected function getConfigPropertySequenceMappingKeys($property) {
-//    $entity_schema_id = $this->getEntity()->getSchemaIdentifier();
-//    $entity_definition = Drupal::service('config.typed')->getDefinition($entity_schema_id);
-//    return array_keys($entity_definition['mapping'][$property]['sequence']['mapping']);
-//  }
 
 }

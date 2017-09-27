@@ -21,19 +21,19 @@ use Drupal\ws_data_sync\Plugin\AuthenticationAdapterBase;
  */
 class SimpleAuth extends AuthenticationAdapterBase {
 
-  public function getCredentialParams() {
+  public function getCredentialParams($authentication) {
     $params = [
       's_user' => [
         '#type' => 'textfield',
         '#title' => 'Simple User',
         '#length' => 64,
-        '#attributes' => ['name' => 'authentication[params][s_user]'],
+        '#default_value' => $authentication['credentials']['s_user'] ?? '',
       ],
       's_password' => [
         '#type' => 'textfield',
         '#title' => 'Simple Password',
         '#length' => 64,
-        '#attributes' => ['name' => 'authentication[params][s_password]'],
+        '#default_value' => $authentication['credentials']['s_password'] ?? '',
       ],
     ];
 

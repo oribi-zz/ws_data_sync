@@ -30,11 +30,11 @@ use Drupal\Core\Config\Entity\ConfigEntityBase;
  *     "uuid" = "uuid"
  *   },
  *   links = {
- *     "canonical" = "/admin/config/services/data-sync/field-mapping/field_mapping/{field_mapping}",
- *     "add-form" = "/admin/config/services/data-sync/field-mapping/field_mapping/add",
- *     "edit-form" = "/admin/config/services/data-sync/field-mapping/field_mapping/{field_mapping}/edit",
- *     "delete-form" = "/admin/config/services/data-sync/field-mapping/field_mapping/{field_mapping}/delete",
- *     "collection" = "/admin/config/services/data-sync/field-mapping/field_mapping"
+ *     "canonical" = "/admin/config/services/data-sync/field-mapping/{field_mapping}",
+ *     "add-form" = "/admin/config/services/data-sync/{webservice}/{feed}/fieldmapping/add",
+ *     "edit-form" = "/admin/config/services/data-sync/{webservice}/{feed}/fieldmapping/{field_mapping}/edit",
+ *     "delete-form" = "/admin/config/services/data-sync/field-mapping/{field_mapping}/delete",
+ *     "collection" = "/admin/config/services/data-sync/{webservice}/{feed}/fieldmappings"
  *   }
  * )
  */
@@ -53,5 +53,35 @@ class FieldMapping extends ConfigEntityBase implements FieldMappingInterface {
    * @var string
    */
   protected $label;
+
+  /**
+   * The Field Mapping label.
+   *
+   * @var string
+   */
+  protected $webservice;
+
+  /**
+   * The Field Mapping label.
+   *
+   * @var string
+   */
+  protected $feed;
+
+  /**
+   * @return string
+   */
+  public function getWebservice(): string {
+    return $this->webservice;
+  }
+
+  /**
+   * @return string
+   */
+  public function getFeed(): string {
+    return $this->feed;
+  }
+
+
 
 }

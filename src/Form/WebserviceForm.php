@@ -4,10 +4,10 @@ namespace Drupal\ws_data_sync\Form;
 
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Form\FormStateInterface;
-//use Drupal\ws_data_sync\Plugin\AuthenticationAdapterManager;
-//use Drupal\ws_data_sync\Plugin\ResponseFormatAdapterManager;
-//use Drupal\ws_data_sync\Plugin\WebserviceAdapterManager;
-//use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\ws_data_sync\Plugin\AuthenticationAdapterManager;
+use Drupal\ws_data_sync\Plugin\ResponseFormatAdapterManager;
+use Drupal\ws_data_sync\Plugin\WebserviceAdapterManager;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Class WebserviceForm.
@@ -35,8 +35,8 @@ class WebserviceForm extends EntityForm {
 //    $this->formatAdapter = $format_adapter;
 //    $this->authenticationAdapter = $authentication_adapter;
 //  }
-//
-//
+
+
 //  public static function create(ContainerInterface $container) {
 //    return new static(
 //      $container->get('plugin.manager.ws_data_sync.ws_adapter'),
@@ -49,13 +49,13 @@ class WebserviceForm extends EntityForm {
     $form = parent::buildForm($form, $form_state);
 
     /** @var \Drupal\ws_data_sync\Plugin\WebserviceAdapterManager $webservice_adapter */
-    $webservice_adapter = \Drupal::service('plugin.manager.ws_data_sync.ws_adapter');
+    $this->webserviceAdapter = \Drupal::service('plugin.manager.ws_data_sync.ws_adapter');
 
     /** @var \Drupal\ws_data_sync\Plugin\ResponseFormatAdapterManager $format_adapter */
-    $format_adapter = \Drupal::service('plugin.manager.ws_data_sync.response_format_adapter');
+    $this->formatAdapter = \Drupal::service('plugin.manager.ws_data_sync.response_format_adapter');
 
     /** @var \Drupal\ws_data_sync\Plugin\AuthenticationAdapterManager $authentication_adapter */
-    $authentication_adapter = \Drupal::service('plugin.manager.ws_data_sync.authentication');
+    $this->authenticationAdapter = \Drupal::service('plugin.manager.ws_data_sync.authentication');
 
     /** @var \Drupal\ws_data_sync\Entity\Webservice $webservice */
     $webservice = $this->entity;
@@ -86,40 +86,22 @@ class WebserviceForm extends EntityForm {
       '#required' => TRUE,
     ];
 
-    $form['type'] = [
-      '#type' => 'select',
-      '#title' => $this->t('Type'),
-      '#options' => $webservice_adapter->getPluginsSelectList(),
-//      '#options' => $this->webserviceAdapter->getPluginsSelectList(),
-      '#default_value' => $webservice->ws_type(),
-      '#description' => $this->t("Type of webservice."),
-      '#required' => TRUE,
-    ];
-
-    $form['format'] = [
-      '#type' => 'select',
-      '#title' => $this->t('Remote format'),
-      '#options' => $format_adapter->getPluginsSelectList(),
-//      '#options' => $this->formatAdapter->getPluginsSelectList(),
-      '#default_value' => $webservice->getFormat(),
-//      '#empty_option'  => t('- select -'),
-      '#description' => $this->t("Format of the remote data."),
-      '#required' => TRUE,
-    ];
-
-    $authentication = $webservice->ws_authentication();
+    $authentication = '';//$webservice->ws_authentication();
     $form['authentication'] = [
       '#type' => 'container',
       '#tree' => TRUE,
     ];
 
+    $authentication = $webservice->ws_authentication();
+
     // Todo: Load fields dynamically
     $form['authentication']['type'] = [
       '#type' => 'select',
       '#title' => $this->t('Authentication'),
-      '#options' => $authentication_adapter->getPluginsSelectList(),
+      '#options' => $this->authenticationAdapter->getPluginsSelectList(),
 //      '#options' => $this->authenticationAdapter->getPluginsSelectList(),
-      '#default_value' => $authentication['type'],
+      '#default_value' => isset($authentication['type']) ? $authentication['type'] : '',
+//      '#default_value' => $authentication['type'],
       '#empty_option' => t('- none -'),
       '#description' => $this->t("Save after change type to load fields."),
       '#required' => FALSE,
@@ -129,38 +111,63 @@ class WebserviceForm extends EntityForm {
 //      ],
     ];
 
-    if ($authentication['type'] !== '') {
+    if (isset($authentication['type'])) {
+//    if ($authentication['type'] !== '' || FALSE) {
       /** @var \Drupal\ws_data_sync\Plugin\AuthenticationAdapterInterface $authentication_plugin */
-      $authentication_plugin = $authentication_adapter->createInstance($authentication['type']);
+      $authentication_plugin = $this->authenticationAdapter->createInstance($authentication['type']);
 //      $authentication_plugin = $this->authenticationAdapter->createInstance($authentication['type']);
-      $credentials = $authentication_plugin->getCredentialParams();
+      $credentials = $authentication_plugin->getCredentialParams($authentication);
       $form['authentication']['credentials'] = [
-        '#title' => t('Authentication params'),
+        '#title' => t('Authentication credentials'),
         '#type' => 'details',
         '#open' => TRUE,
-        $credentials,
         '#states' => [
           'visible' => ['[name="authentication[type]"' => ['value' => $authentication['type']]],
         ]
-      ];
+      ] + $credentials;
+
     }
 
-//    $form['load_credentials'] = [
-//      '#type' => 'button',
-//      '#value' => 'Load credentials',
-//      '#attributes' => [
-//        'name' => 'load_credentials',
-//      ],
-//      '#states' => [
-//        'invisible' => [
-//          '[name="authentication[type]"' => [
-//            ['value' => $authentication['type']],
-//            ['value' => '']],
-//        ],
-//      ],
-//    ];
+    $form['test_connection'] = [
+      '#type' => 'button',
+      '#value' => t('Test connection'),
+    ];
+
+    $form['type'] = [
+      '#type' => 'select',
+      '#title' => $this->t('Type'),
+      '#options' => $this->webserviceAdapter->getPluginsSelectList(),
+//      '#options' => $this->webserviceAdapter->getPluginsSelectList(),
+      '#default_value' => $webservice->ws_type(),
+      '#description' => $this->t("Type of webservice."),
+      '#required' => TRUE,
+    ];
+
+    $form['format'] = [
+      '#type' => 'select',
+      '#title' => $this->t('Remote format'),
+      '#options' => $this->formatAdapter->getPluginsSelectList(),
+//      '#options' => $this->formatAdapter->getPluginsSelectList(),
+      '#default_value' => $webservice->getFormat(),
+//      '#empty_option'  => t('- select -'),
+      '#description' => $this->t("Format of the remote data."),
+      '#required' => TRUE,
+    ];
 
     return $form;
+  }
+
+  public function submitForm(array &$form, FormStateInterface $form_state) {
+//    parent::submitForm($form, $form_state);
+
+    dpm($this->entity->ws_authentication()['type'], 'entity');
+    dpm($form_state->getValue('authentication')['type'], 'form state');
+
+    if ($form_state->getValue('authentication')['type'] !== $this->entity->ws_authentication()['type']) {
+      $form_state->setRebuild();
+      $form_state->disableRedirect();
+    }
+
   }
 
 

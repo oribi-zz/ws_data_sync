@@ -4,6 +4,8 @@ namespace Drupal\ws_data_sync\Form;
 
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Url;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Class FieldMappingForm.
@@ -13,8 +15,8 @@ class FieldMappingForm extends EntityForm {
   /**
    * {@inheritdoc}
    */
-  public function form(array $form, FormStateInterface $form_state) {
-    $form = parent::form($form, $form_state);
+  public function buildForm(array $form, FormStateInterface $form_state, Request $request = null) {
+    $form = parent::buildForm($form, $form_state);
 
     $field_mapping = $this->entity;
     $form['label'] = [
@@ -35,7 +37,22 @@ class FieldMappingForm extends EntityForm {
       '#disabled' => !$field_mapping->isNew(),
     ];
 
-    /* You will need additional form elements for your custom properties. */
+    $form['feed'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Feed'),
+      '#maxlength' => 255,
+      '#default_value' => $request->get('feed'),
+      '#required' => TRUE,
+    ];
+
+    $form['webservice'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Webservice'),
+      '#maxlength' => 255,
+      '#default_value' => $request->get('webservice'),
+      '#required' => TRUE,
+    ];
+
 
     return $form;
   }
@@ -59,7 +76,13 @@ class FieldMappingForm extends EntityForm {
           '%label' => $field_mapping->label(),
         ]));
     }
-    $form_state->setRedirectUrl($field_mapping->toUrl('collection'));
+
+    $list = Url::fromRoute(
+      'entity.field_mapping.collection', [
+        'webservice' => $form_state->getValue('webservice'),
+        'feed' => $form_state->getValue('feed')
+      ]);
+    $form_state->setRedirectUrl($list);
   }
 
 }

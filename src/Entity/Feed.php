@@ -20,7 +20,7 @@ use Drupal\ws_data_sync\Form\ComplexKeyFormatterTrait;
  *       "delete" = "Drupal\ws_data_sync\Form\FeedDeleteForm"
  *     },
  *     "route_provider" = {
- *       "html" = "Drupal\ws_data_sync\FeedHtmlRouteProvider",
+ *       "html" = "Drupal\ws_data_sync\HtmlRouteProvider",
  *     },
  *   },
  *   config_prefix = "feed",
@@ -31,11 +31,11 @@ use Drupal\ws_data_sync\Form\ComplexKeyFormatterTrait;
  *     "uuid" = "uuid"
  *   },
  *   links = {
- *     "canonical" = "/admin/config/services/data-sync/feed/{feed}",
- *     "add-form" = "/admin/config/services/data-sync/feed/add",
- *     "edit-form" = "/admin/config/services/data-sync/feed/{feed}/edit",
+ *     "canonical" = "/admin/config/services/data-sync/{webservice}/feed/{feed}",
+ *     "add-form" = "/admin/config/services/data-sync/{webservice}/feed/add",
+ *     "edit-form" = "/admin/config/services/data-sync/{webservice}/feed/{feed}/edit",
  *     "delete-form" = "/admin/config/services/data-sync/feed/{feed}/delete",
- *     "collection" = "/admin/config/services/data-sync/feed"
+ *     "collection" = "/admin/config/services/data-sync/{webservice}/feeds"
  *   }
  * )
  */
@@ -77,9 +77,9 @@ class Feed extends ConfigEntityBase implements FeedInterface {
   }
 
   /**
-   * @return array
+   * @return array|null
    */
-  public function getLocal(): array {
+  public function getLocal() {
     return $this->local;
   }
 
