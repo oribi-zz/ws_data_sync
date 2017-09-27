@@ -15,9 +15,7 @@ class FeedForm extends EntityForm {
   use ComplexKeyFormatterTrait;
 
   public function buildForm(array $form, FormStateInterface $form_state, Request $request = null) {
-    $form = parent::form($form, $form_state);
-
-    dpm($request);
+    $form = parent::buildForm($form, $form_state);
 
     /** @var \Drupal\ws_data_sync\EntityTypeMapper $entity_type_map */
     $entity_type_map = \Drupal::service('ws_data_sync.entity_type_mapper');
@@ -56,7 +54,6 @@ class FeedForm extends EntityForm {
       '#type' => 'textfield',
       '#title' => $this->t('Webservice'),
       '#default_value' => $request->get('webservice'),
-//      '#default_value' => $feed->getWebservice(),
       '#required' => TRUE,
     ];
 
@@ -67,7 +64,6 @@ class FeedForm extends EntityForm {
    * {@inheritdoc}
    */
   public function save(array $form, FormStateInterface $form_state) {
-    /** @var \Drupal\ws_data_sync\Entity\Feed $feed */
     $feed = $this->entity;
 
     // Massage colon separated 'local' value to array for structured config storage

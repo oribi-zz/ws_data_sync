@@ -77,12 +77,12 @@ class FieldMappingForm extends EntityForm {
         ]));
     }
 
-    $list = Url::fromRoute(
+    $feed_field_mapping_list = Url::fromRoute(
       'entity.field_mapping.collection', [
         'webservice' => $form_state->getValue('webservice'),
         'feed' => $form_state->getValue('feed')
       ]);
-    $form_state->setRedirectUrl($list);
+    $form_state->setRedirectUrl($feed_field_mapping_list);
   }
 
 }
