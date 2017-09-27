@@ -22,7 +22,9 @@ class FeedDeleteForm extends EntityConfirmFormBase {
    * {@inheritdoc}
    */
   public function getCancelUrl() {
-    return new Url('entity.feed.collection');
+    return Url::fromRoute('entity.feed.collection', [
+      'webservice' => $this->getEntity()->getWebservice(),
+    ]);
   }
 
   /**

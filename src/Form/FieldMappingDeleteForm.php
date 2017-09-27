@@ -22,7 +22,10 @@ class FieldMappingDeleteForm extends EntityConfirmFormBase {
    * {@inheritdoc}
    */
   public function getCancelUrl() {
-    return new Url('entity.field_mapping.collection');
+    return Url::fromRoute('entity.field_mapping.collection', [
+      'webservice' => $this->getEntity()->getWebservice(),
+      'feed' => $this->getEntity()->getFeed(),
+    ]);
   }
 
   /**
