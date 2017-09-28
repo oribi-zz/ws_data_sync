@@ -40,6 +40,7 @@ class FeedListBuilder extends ConfigEntityListBuilder {
 //    $header['id'] = $this->t('Machine name');
     $header['webservice'] = $this->t('Webservice');
     $header['endpoint'] = $this->t('Endpoint');
+    $header['field_mappings'] = $this->t('Field mappings');
     return $header + parent::buildHeader();
   }
 
@@ -47,10 +48,18 @@ class FeedListBuilder extends ConfigEntityListBuilder {
    * {@inheritdoc}
    */
   public function buildRow(EntityInterface $entity) {
+
+    $feed_mapping_count = \Drupal::entityQuery('field_mapping')
+      ->condition('webservice', $entity->getWebservice())
+      ->condition('feed', $entity->id())
+      ->count()
+      ->execute();
+
     $row['label'] = $entity->label();
 //    $row['id'] = $entity->id();
     $row['webservice'] = $entity->getWebservice();
     $row['endpoint'] = $entity->getEndpoint();
+    $row['field_mappings'] = $feed_mapping_count;
     return $row + parent::buildRow($entity);
   }
 
@@ -74,6 +83,7 @@ class FeedListBuilder extends ConfigEntityListBuilder {
 
 
     unset($operations['translate']);
+
     $feed_mapping_count = \Drupal::entityQuery('field_mapping')
       ->condition('webservice', $entity->getWebservice())
       ->condition('feed', $entity->id())

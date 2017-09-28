@@ -20,6 +20,7 @@ class WebserviceListBuilder extends ConfigEntityListBuilder {
 //    $header['id'] = $this->t('Machine name');
     $header['type'] = $this->t('Type');
     $header['authentication'] = $this->t('Authentication');
+    $header['feeds'] = $this->t('Feeds');
     return $header + parent::buildHeader();
   }
 
@@ -27,19 +28,30 @@ class WebserviceListBuilder extends ConfigEntityListBuilder {
    * {@inheritdoc}
    */
   public function buildRow(EntityInterface $entity) {
+    $feed_count = \Drupal::entityQuery('feed')
+      ->condition('webservice', $entity->id())
+      ->count()
+      ->execute();
+
     $row['label'] = $entity->label();
 //    $row['id'] = $entity->id();
     $row['type'] = $entity->ws_type();
     $row['authentication'] = $entity->ws_authentication()['type'] ?: 'none';
+    $row['feeds'] = $feed_count;
     // You probably want a few more properties here...
     return $row + parent::buildRow($entity);
   }
 
   public function getOperations(EntityInterface $entity) {
     $operations =  parent::getOperations($entity);
+
     unset($operations['translate']);
 
-    $feed_count = \Drupal::entityQuery('feed')->condition('webservice', $entity->id())->count()->execute();
+    $feed_count = \Drupal::entityQuery('feed')
+      ->condition('webservice', $entity->id())
+      ->count()
+      ->execute();
+
     if ($feed_count > 0) {
       $operations['manage_feeds'] = [
         'title' => t('Manage feeds'),
