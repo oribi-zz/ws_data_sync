@@ -69,6 +69,18 @@ class FieldMapping extends ConfigEntityBase implements FieldMappingInterface {
   protected $feed;
 
   /**
+   * @var
+   */
+  protected $local;
+
+  /**
+   * @return mixed
+   */
+  public function getLocal() {
+    return $this->local;
+  }
+
+  /**
    * @return string
    */
   public function getWebservice(): string {

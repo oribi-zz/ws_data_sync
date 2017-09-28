@@ -4,7 +4,6 @@ services:
     tags:
       - { name: event_subscriber }
 
-
   plugin.manager.ws_data_sync.ws_adapter:
     class: Drupal\ws_data_sync\Plugin\WebserviceAdapterManager
     parent: default_plugin_manager
@@ -14,10 +13,14 @@ services:
   plugin.manager.ws_data_sync.response_format_adapter:
     class: Drupal\ws_data_sync\Plugin\ResponseFormatAdapterManager
     parent: default_plugin_manager
-  ws_data_sync.entity_type_mapper:
-    class: Drupal\ws_data_sync\EntityTypeMapper
-    arguments: ['@entity_type.manager', '@entity_type.bundle.info', '@entity_field.manager', '@plugin.manager.ws_data_sync.special_field_map_adapter']
-
   plugin.manager.ws_data_sync.authentication:
     class: Drupal\ws_data_sync\Plugin\AuthenticationAdapterManager
     parent: default_plugin_manager
+
+  ws_data_sync.entity_type_mapper:
+    class: Drupal\ws_data_sync\EntityTypeMapper
+    arguments: ['@entity_type.manager', '@entity_type.bundle.info']
+  ws_data_sync.entity_field_mapper:
+    class: Drupal\ws_data_sync\EntityFieldMapper
+    arguments: ['@entity_field.manager', '@plugin.manager.ws_data_sync.special_field_map_adapter']
+

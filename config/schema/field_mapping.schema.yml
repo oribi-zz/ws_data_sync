@@ -10,6 +10,9 @@ ws_data_sync.field_mapping.*:
       label: 'Label'
     uuid:
       type: string
+    local:
+      type: string
+      label: 'Local'
     feed:
       type: string
       label: 'Feed'

@@ -18,6 +18,17 @@ class FieldMappingForm extends EntityForm {
   public function buildForm(array $form, FormStateInterface $form_state, Request $request = null) {
     $form = parent::buildForm($form, $form_state);
 
+    /** @var \Drupal\ws_data_sync\Entity\Feed $feed */
+    $feed = $request->get('feed');
+    /** @var \Drupal\ws_data_sync\Entity\Webservice $webservice */
+    $webservice = $request->get('webservice');
+
+    $fields = \Drupal::service('ws_data_sync.entity_field_mapper')->getEntityFields(
+      $feed->getLocal()['type'],
+      $feed->getLocal()['bundle']
+    );
+
+    /** @var \Drupal\ws_data_sync\Entity\FieldMapping $field_mapping */
     $field_mapping = $this->entity;
     $form['label'] = [
       '#type' => 'textfield',
@@ -37,11 +48,19 @@ class FieldMappingForm extends EntityForm {
       '#disabled' => !$field_mapping->isNew(),
     ];
 
+    $form['local'] = [
+      '#type' => 'select',
+      '#title' => $this->t('Local entity field'),
+      '#description' => $this->t('Which field should the remote data be mapped to'),
+      '#options' => $fields,
+
+    ];
+
     $form['feed'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Feed'),
       '#maxlength' => 255,
-      '#default_value' => $request->get('feed')->id(),
+      '#default_value' => $feed->id(),
       '#required' => TRUE,
     ];
 
@@ -49,7 +68,7 @@ class FieldMappingForm extends EntityForm {
       '#type' => 'textfield',
       '#title' => $this->t('Webservice'),
       '#maxlength' => 255,
-      '#default_value' => $request->get('webservice')->id(),
+      '#default_value' => $webservice->id(),
       '#required' => TRUE,
     ];
 

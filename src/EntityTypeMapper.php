@@ -5,14 +5,13 @@ namespace Drupal\ws_data_sync;
 use Drupal\Core\Entity\ContentEntityType;
 use Drupal\webprofiler\Entity\EntityManagerWrapper;
 use Drupal\Core\Entity\EntityTypeBundleInfo;
-use Drupal\Core\Entity\EntityFieldManager;
-use Drupal\ws_data_sync\Plugin\SpecialFieldMapAdapterManager;
 
 /**
  * Class EntityTypeMapper.
  */
-class EntityTypeMapper implements EntityTypeMapperInterface {
+class EntityTypeMapper {
 
+  // Todo: move this array into module configuration
   /**
    * @var array
    */
@@ -36,23 +35,11 @@ class EntityTypeMapper implements EntityTypeMapperInterface {
   protected $allEntityTypeBundleInfo;
 
   /**
-   * @var \Drupal\Core\Entity\EntityFieldManager
-   */
-  protected $entityFieldManager;
-
-  /**
-   * @var \Drupal\ws_data_sync\Plugin\SpecialFieldMapAdapterManager
-   */
-  protected $specialFieldMapAdapter;
-
-  /**
    * Constructs a new EntityTypeMapper object.
    */
-  public function __construct(EntityManagerWrapper $entity_type_manager, EntityTypeBundleInfo $entity_type_bundle_info, EntityFieldManager $entity_field_manager, SpecialFieldMapAdapterManager $special_field_map_adapter) {
+  public function __construct(EntityManagerWrapper $entity_type_manager, EntityTypeBundleInfo $entity_type_bundle_info) {
     $this->entityTypeManager = $entity_type_manager;
     $this->allEntityTypeBundleInfo = $entity_type_bundle_info->getAllBundleInfo();
-    $this->entityFieldManager = $entity_field_manager;
-    $this->specialFieldMapAdapter = $special_field_map_adapter;
   }
 
   /**

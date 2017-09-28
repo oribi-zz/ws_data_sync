@@ -42,6 +42,7 @@ class FeedForm extends EntityForm {
       '#disabled' => !$feed->isNew(),
     ];
 
+    // Todo: Lock/de-activate this field if feed has field mappings
     $form['local'] = [
       '#type' => 'select',
       '#title' => $this->t('Local entity'),
