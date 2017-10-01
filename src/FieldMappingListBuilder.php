@@ -71,7 +71,18 @@ class FieldMappingListBuilder extends ConfigEntityListBuilder {
       'url' => Url::fromRoute('entity.field_mapping.edit_form', [
         'webservice' => $this->request->get('webservice'),
         'feed' => $this->request->get('feed'),
-        'field_mapping' => $entity->id()]),
+        'field_mapping' => $entity->id(),
+      ]),
+    ];
+
+    $operations['delete'] = [
+      'title' => $this->t('Delete'),
+      'weight' => 10,
+      'url' => Url::fromRoute('entity.field_mapping.delete_form', [
+        'webservice' => $this->request->get('webservice'),
+        'feed' => $this->request->get('feed'),
+        'field_mapping' => $entity->id(),
+      ]),
     ];
 
     unset($operations['translate']);

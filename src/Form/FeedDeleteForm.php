@@ -11,6 +11,8 @@ use Drupal\Core\Url;
  */
 class FeedDeleteForm extends EntityConfirmFormBase {
 
+  // Todo: Add check if this feed contains field mappings
+
   /**
    * {@inheritdoc}
    */

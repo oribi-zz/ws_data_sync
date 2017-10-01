@@ -11,6 +11,8 @@ use Drupal\Core\Url;
  */
 class FieldMappingDeleteForm extends EntityConfirmFormBase {
 
+  // Todo: Add check if this mapping is part of cron sync
+
   /**
    * {@inheritdoc}
    */

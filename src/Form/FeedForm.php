@@ -22,6 +22,10 @@ class FeedForm extends EntityForm {
 
     $type_options = $entity_type_map->getContentEntityTypes();
 
+    /** @var \Drupal\ws_data_sync\Entity\Webservice $webservice */
+    $webservice = $request->get('webservice');
+
+
     /** @var \Drupal\ws_data_sync\Entity\feed $feed */
     $feed = $this->entity;
     $form['label'] = [
@@ -58,12 +62,18 @@ class FeedForm extends EntityForm {
       '#required' => TRUE,
     ];
 
+    // todo: move this to save method (if isNew)
     $form['webservice'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Webservice'),
-      '#default_value' => $request->get('webservice'),
+      '#default_value' => $webservice->id(),
       '#required' => TRUE,
     ];
+
+    $form['actions']['delete']['#url'] = Url::fromRoute('entity.feed.delete_form', [
+      'webservice' => $webservice->id(),
+      'feed' => $feed->id(),
+    ]);
 
     return $form;
   }

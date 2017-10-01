@@ -17,14 +17,25 @@ class RouteSubscriber extends RouteSubscriberBase {
    */
   protected function alterRoutes(RouteCollection $collection) {
 
-    $field_mapping_form_parameters = [
+    $entity_form_route_parameters = [
       'webservice' => ['type' => 'entity:webservice'],
       'feed' => ['type' => 'entity:feed'],
+      'field_mapping' => ['type' => 'entity:field_mapping'],
     ];
 
-    foreach (['entity.field_mapping.add_form', 'entity.field_mapping.edit_form'] as $route_name) {
+    foreach (['entity.feed.add_form', 'entity.feed.edit_form', 'entity.feed.delete_form'] as $route_name) {
       $route = $collection->get($route_name);
-      $route->setOption('parameters', $field_mapping_form_parameters);
+//      $route->setOption('parameters', [
+//        'webservice' => $entity_form_route_parameters['webservice'],
+//        'feed' => $entity_form_route_parameters['feed'],
+//      ]);
+      $route->setOption('parameters', $entity_form_route_parameters);
+      $collection->add($route_name, $route);
+    }
+
+    foreach (['entity.field_mapping.add_form', 'entity.field_mapping.edit_form', 'entity.field_mapping.delete_form'] as $route_name) {
+      $route = $collection->get($route_name);
+      $route->setOption('parameters', $entity_form_route_parameters);
       $collection->add($route_name, $route);
     }
 

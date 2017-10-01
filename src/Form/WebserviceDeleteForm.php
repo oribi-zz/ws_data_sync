@@ -11,6 +11,8 @@ use Drupal\Core\Url;
  */
 class WebserviceDeleteForm extends EntityConfirmFormBase {
 
+  // Todo: Add check if this webservice contains feeds and/or field mappings
+
   /**
    * {@inheritdoc}
    */

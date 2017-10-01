@@ -53,9 +53,9 @@ class FieldMappingForm extends EntityForm {
       '#title' => $this->t('Local entity field'),
       '#description' => $this->t('Which field should the remote data be mapped to'),
       '#options' => $fields,
-
     ];
 
+    // todo: move this to save method (if isNew)
     $form['feed'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Feed'),
@@ -64,6 +64,7 @@ class FieldMappingForm extends EntityForm {
       '#required' => TRUE,
     ];
 
+    // todo: move this to save method (if isNew)
     $form['webservice'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Webservice'),
@@ -71,6 +72,13 @@ class FieldMappingForm extends EntityForm {
       '#default_value' => $webservice->id(),
       '#required' => TRUE,
     ];
+
+    $form['actions']['delete']['#url'] = Url::fromRoute('entity.field_mapping.delete_form', [
+      'webservice' => $webservice->id(),
+      'feed' => $feed->id(),
+      'field_mapping' => $field_mapping->id(),
+    ]);
+
 
 
     return $form;

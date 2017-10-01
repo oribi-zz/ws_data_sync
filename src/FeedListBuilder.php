@@ -81,6 +81,15 @@ class FeedListBuilder extends ConfigEntityListBuilder {
       ]),
     ];
 
+    $operations['delete'] = [
+      'title' => $this->t('Delete'),
+      'weight' => 10,
+      'url' => Url::fromRoute('entity.feed.delete_form', [
+        'webservice' => $this->request->get('webservice'),
+        'feed' => $entity->id()
+      ]),
+    ];
+
 
     unset($operations['translate']);
 

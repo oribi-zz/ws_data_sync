@@ -162,14 +162,12 @@ class WebserviceForm extends EntityForm {
       '#description' => $this->t("Link to webservice documentation (optional)"),
     ];
 
+    dpm($form);
+
     return $form;
   }
 
   public function submitForm(array &$form, FormStateInterface $form_state) {
-//    parent::submitForm($form, $form_state);
-
-    dpm($this->entity->ws_authentication()['type'], 'entity');
-    dpm($form_state->getValue('authentication')['type'], 'form state');
 
     if ($form_state->getValue('authentication')['type'] !== $this->entity->ws_authentication()['type']) {
       $form_state->setRebuild();

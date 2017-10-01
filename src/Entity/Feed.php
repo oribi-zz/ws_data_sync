@@ -31,10 +31,10 @@ use Drupal\ws_data_sync\Form\ComplexKeyFormatterTrait;
  *     "uuid" = "uuid"
  *   },
  *   links = {
- *     "canonical" = "/admin/config/services/data-sync/{webservice}/feed/{feed}",
+ *     "canonical" = "/admin/config/services/data-sync/{webservice}/{feed}",
  *     "add-form" = "/admin/config/services/data-sync/{webservice}/feed/add",
- *     "edit-form" = "/admin/config/services/data-sync/{webservice}/feed/{feed}/edit",
- *     "delete-form" = "/admin/config/services/data-sync/feed/{feed}/delete",
+ *     "edit-form" = "/admin/config/services/data-sync/{webservice}/{feed}/edit",
+ *     "delete-form" = "/admin/config/services/data-sync/{webservice}/{feed}/delete",
  *     "collection" = "/admin/config/services/data-sync/{webservice}/feeds"
  *   }
  * )
