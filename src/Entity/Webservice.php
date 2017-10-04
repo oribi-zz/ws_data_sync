@@ -90,13 +90,13 @@ class Webservice extends ConfigEntityBase implements WebserviceInterface {
   /**
    * @var string|null
    */
-  protected $documentationLink;
+  protected $documentation_link;
 
   /**
    * @return null|string
    */
   public function getDocumentationLink() {
-    return $this->documentationLink;
+    return $this->documentation_link;
   }
 
   /**
@@ -120,10 +120,9 @@ class Webservice extends ConfigEntityBase implements WebserviceInterface {
     return $this->authentication;
   }
 
-
+  /** @return string */
   public function getSchemaIdentifier() {
     return $this->schemaId;
   }
-
 
 }

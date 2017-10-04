@@ -81,6 +81,20 @@ class FieldMapping extends ConfigEntityBase implements FieldMappingInterface {
   }
 
   /**
+   * @param string $webservice
+   */
+  public function setWebservice(string $webservice) {
+    $this->webservice = $webservice;
+  }
+
+  /**
+   * @param string $feed
+   */
+  public function setFeed(string $feed) {
+    $this->feed = $feed;
+  }
+
+  /**
    * @return string
    */
   public function getWebservice(): string {

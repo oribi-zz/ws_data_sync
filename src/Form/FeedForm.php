@@ -5,6 +5,9 @@ namespace Drupal\ws_data_sync\Form;
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
+use Drupal\ws_data_sync\EntityTypeMapper;
+use Drupal\ws_data_sync\Plugin\WebserviceAdapterManager;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -14,16 +17,45 @@ class FeedForm extends EntityForm {
 
   use ComplexKeyFormatterTrait;
 
-  public function buildForm(array $form, FormStateInterface $form_state, Request $request = null) {
+  /**
+   * @var \Drupal\ws_data_sync\EntityTypeMapper
+   */
+  private $entityTypeMapper;
+
+  /**
+   * @var \Drupal\ws_data_sync\Plugin\WebserviceAdapterManager
+   */
+  private $webserviceAdapterManager;
+
+  /** @var  \Drupal\ws_data_sync\Entity\WebserviceInterface */
+  private $webservice;
+
+  /**
+   * @inheritDoc
+   */
+  public function __construct(EntityTypeMapper $entityTypeMapper, WebserviceAdapterManager $webserviceAdapterManager) {
+    $this->entityTypeMapper = $entityTypeMapper;
+    $this->webserviceAdapterManager = $webserviceAdapterManager;
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('ws_data_sync.entity_type_mapper'),
+      $container->get('plugin.manager.ws_data_sync.ws_adapter')
+    );
+  }
+
+
+  public function buildForm(array $form, FormStateInterface $form_state, Request $request = null, WebserviceAdapterManager $webserviceAdapterManager = null) {
     $form = parent::buildForm($form, $form_state);
 
-    /** @var \Drupal\ws_data_sync\EntityTypeMapper $entity_type_map */
-    $entity_type_map = \Drupal::service('ws_data_sync.entity_type_mapper');
-
-    $type_options = $entity_type_map->getContentEntityTypes();
+    $type_options = $this->entityTypeMapper->getContentEntityTypes();
 
     /** @var \Drupal\ws_data_sync\Entity\Webservice $webservice */
-    $webservice = $request->get('webservice');
+    $this->webservice = $request->get('webservice');
 
 
     /** @var \Drupal\ws_data_sync\Entity\feed $feed */
@@ -55,23 +87,29 @@ class FeedForm extends EntityForm {
       '#required' => TRUE,
     ];
 
+    /** @var \Drupal\ws_data_sync\Plugin\WebserviceAdapter\SpaceX $webservice_type_plugin */
+    $webservice_type_plugin = $this->webserviceAdapterManager->createInstance($this->webservice->ws_type());
+
+    // Todo: Lock/de-activate this field if feed has field mappings
     $form['endpoint'] = [
-      '#type' => 'textfield',
+      '#type' => 'select',
       '#title' => $this->t('Endpoint'),
+      '#options' => $webservice_type_plugin->getEndpoints(),
       '#default_value' => $feed->getEndpoint(),
       '#required' => TRUE,
     ];
 
-    // todo: move this to save method (if isNew)
-    $form['webservice'] = [
-      '#type' => 'textfield',
-      '#title' => $this->t('Webservice'),
-      '#default_value' => $webservice->id(),
-      '#required' => TRUE,
-    ];
+//    // todo: move this to save method (if isNew)
+//    $form['webservice'] = [
+//      '#type' => 'textfield',
+//      '#title' => $this->t('Webservice'),
+//      '#default_value' => $this->webservice->id(),
+//      '#required' => TRUE,
+//    ];
 
+    // Todo: create common method for rewriting delete route
     $form['actions']['delete']['#url'] = Url::fromRoute('entity.feed.delete_form', [
-      'webservice' => $webservice->id(),
+      'webservice' => $this->webservice->id(),
       'feed' => $feed->id(),
     ]);
 
@@ -83,6 +121,10 @@ class FeedForm extends EntityForm {
    */
   public function save(array $form, FormStateInterface $form_state) {
     $feed = $this->entity;
+
+    if ($feed->isNew()) {
+      $feed->setWebservice($this->webserivce);
+    }
 
     // Massage colon separated 'local' value to array for structured config storage
     $keys = self::getConfigPropertySequenceMappingKeys('local', $feed->getEntityTypeId());
@@ -105,7 +147,7 @@ class FeedForm extends EntityForm {
           '%label' => $feed->label(),
         ]));
     }
-    $webservice_feed_list = Url::fromRoute('entity.feed.collection', ['webservice' => $feed->getWebservice()]);
+    $webservice_feed_list = Url::fromRoute('entity.feed.collection', ['webservice' => $this->webservice->id()]);
     $form_state->setRedirectUrl($webservice_feed_list);
   }
 

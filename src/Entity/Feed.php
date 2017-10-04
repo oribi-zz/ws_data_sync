@@ -102,6 +102,13 @@ class Feed extends ConfigEntityBase implements FeedInterface {
     return $this->webservice;
   }
 
+  /**
+   * @param string $webservice
+   */
+  public function setWebservice(string $webservice) {
+    $this->webservice = $webservice;
+  }
+
 
 
 }

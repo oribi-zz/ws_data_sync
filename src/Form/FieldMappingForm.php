@@ -5,6 +5,11 @@ namespace Drupal\ws_data_sync\Form;
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
+use Drupal\ws_data_sync\Entity\FeedInterface;
+use Drupal\ws_data_sync\Entity\WebserviceInterface;
+use Drupal\ws_data_sync\EntityFieldMapper;
+use Drupal\ws_data_sync\EntityTypeMapper;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -13,23 +18,52 @@ use Symfony\Component\HttpFoundation\Request;
 class FieldMappingForm extends EntityForm {
 
   /**
+   * @var \Drupal\ws_data_sync\Entity\WebserviceInterface
+   */
+  private $webservice;
+
+  /**
+   * @var \Drupal\ws_data_sync\Entity\FeedInterface
+   */
+  private $feed;
+
+  /**
+   * @var \Drupal\ws_data_sync\EntityFieldMapper
+   */
+  private $entityFieldMapper;
+
+  /**
+   * @inheritDoc
+   */
+  public function __construct(EntityFieldMapper $entityFieldMapper) {
+    $this->entityFieldMapper = $entityFieldMapper;
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('ws_data_sync.entity_field_mapper')
+    );
+  }
+
+
+  /**
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state, Request $request = null) {
     $form = parent::buildForm($form, $form_state);
 
     /** @var \Drupal\ws_data_sync\Entity\Feed $feed */
-    $feed = $request->get('feed');
-    /** @var \Drupal\ws_data_sync\Entity\Webservice $webservice */
-    $webservice = $request->get('webservice');
+    $this->feed = $request->get('feed');
 
-    $fields = \Drupal::service('ws_data_sync.entity_field_mapper')->getEntityFields(
-      $feed->getLocal()['type'],
-      $feed->getLocal()['bundle']
-    );
+    /** @var \Drupal\ws_data_sync\Entity\Webservice $webservice */
+    $this->webservice = $request->get('webservice');
 
     /** @var \Drupal\ws_data_sync\Entity\FieldMapping $field_mapping */
     $field_mapping = $this->entity;
+
     $form['label'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Label'),
@@ -48,38 +82,24 @@ class FieldMappingForm extends EntityForm {
       '#disabled' => !$field_mapping->isNew(),
     ];
 
+    $entity_fields = $this->entityFieldMapper->getEntityFields(
+      $this->feed->getLocal()['type'],
+      $this->feed->getLocal()['bundle']
+    );
+
     $form['local'] = [
       '#type' => 'select',
       '#title' => $this->t('Local entity field'),
       '#description' => $this->t('Which field should the remote data be mapped to'),
-      '#options' => $fields,
+      '#options' => $entity_fields,
     ];
 
-    // todo: move this to save method (if isNew)
-    $form['feed'] = [
-      '#type' => 'textfield',
-      '#title' => $this->t('Feed'),
-      '#maxlength' => 255,
-      '#default_value' => $feed->id(),
-      '#required' => TRUE,
-    ];
-
-    // todo: move this to save method (if isNew)
-    $form['webservice'] = [
-      '#type' => 'textfield',
-      '#title' => $this->t('Webservice'),
-      '#maxlength' => 255,
-      '#default_value' => $webservice->id(),
-      '#required' => TRUE,
-    ];
-
+    // Todo: create common method for rewriting delete route
     $form['actions']['delete']['#url'] = Url::fromRoute('entity.field_mapping.delete_form', [
-      'webservice' => $webservice->id(),
-      'feed' => $feed->id(),
+      'webservice' => $this->webservice->id(),
+      'feed' => $this->feed->id(),
       'field_mapping' => $field_mapping->id(),
     ]);
-
-
 
     return $form;
   }
@@ -89,6 +109,11 @@ class FieldMappingForm extends EntityForm {
    */
   public function save(array $form, FormStateInterface $form_state) {
     $field_mapping = $this->entity;
+
+    if ($field_mapping->isNew()) {
+      $field_mapping->setWebservice($this->webservice->id());
+      $field_mapping->setFeed($this->feed->id());
+    }
     $status = $field_mapping->save();
 
     switch ($status) {
@@ -99,15 +124,15 @@ class FieldMappingForm extends EntityForm {
         break;
 
       default:
-        drupal_set_message($this->t('Saved the %label Field Mapping.', [
+        drupal_set_message($this->t('Saved the %webservice %label Field Mapping.', [
           '%label' => $field_mapping->label(),
         ]));
     }
 
     $feed_field_mapping_list = Url::fromRoute(
       'entity.field_mapping.collection', [
-        'webservice' => $form_state->getValue('webservice'),
-        'feed' => $form_state->getValue('feed')
+        'webservice' => $this->webservice->id(),
+        'feed' => $this->feed->id()
       ]);
     $form_state->setRedirectUrl($feed_field_mapping_list);
   }
