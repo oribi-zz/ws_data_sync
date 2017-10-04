@@ -4,6 +4,7 @@ namespace Drupal\ws_data_sync\Form;
 
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\ws_data_sync\EntityDependants;
 use Drupal\ws_data_sync\Plugin\AuthenticationAdapterManager;
 use Drupal\ws_data_sync\Plugin\ResponseFormatAdapterManager;
 use Drupal\ws_data_sync\Plugin\WebserviceAdapterManager;
@@ -28,6 +29,30 @@ class WebserviceForm extends EntityForm {
    * @var \Drupal\ws_data_sync\Plugin\AuthenticationAdapterManager
    */
   private $authenticationAdapter;
+
+  /**
+   * @var \Drupal\ws_data_sync\EntityDependants
+   */
+  private $dependants;
+
+  /**
+   * @inheritDoc
+   */
+  public function __construct(EntityDependants $dependants) {
+    $this->dependants = $dependants;
+  }
+
+
+  /**
+   * @inheritDoc
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('ws_data_sync.entity_dependants')
+    );
+  }
+
+
 
   // Todo: Figure out why dependency injection fails when submitting the form via ajax...
 //  public function __construct(WebserviceAdapterManager $webservice_adapter, ResponseFormatAdapterManager $format_adapter, AuthenticationAdapterManager $authentication_adapter) {
@@ -86,7 +111,7 @@ class WebserviceForm extends EntityForm {
       '#required' => TRUE,
     ];
 
-    $authentication = '';//$webservice->ws_authentication();
+    $authentication = '';
     $form['authentication'] = [
       '#type' => 'container',
       '#tree' => TRUE,
@@ -137,7 +162,6 @@ class WebserviceForm extends EntityForm {
       '#type' => 'select',
       '#title' => $this->t('Type'),
       '#options' => $this->webserviceAdapter->getPluginsSelectList(),
-//      '#options' => $this->webserviceAdapter->getPluginsSelectList(),
       '#default_value' => $webservice->ws_type(),
       '#description' => $this->t("Type of webservice."),
       '#required' => TRUE,
@@ -147,7 +171,6 @@ class WebserviceForm extends EntityForm {
       '#type' => 'select',
       '#title' => $this->t('Remote format'),
       '#options' => $this->formatAdapter->getPluginsSelectList(),
-//      '#options' => $this->formatAdapter->getPluginsSelectList(),
       '#default_value' => $webservice->getFormat(),
 //      '#empty_option'  => t('- select -'),
       '#description' => $this->t("Format of the remote data."),
@@ -162,7 +185,10 @@ class WebserviceForm extends EntityForm {
       '#description' => $this->t("Link to webservice documentation (optional)"),
     ];
 
-    dpm($form);
+    $dependant_params = ['webservice' => $webservice->id()];
+    if ($this->dependants->hasDependants('field_mapping',$dependant_params)) {
+      $this->dependants->disableSourceFields($form,'feed', $dependant_params, ['url']);
+    }
 
     return $form;
   }

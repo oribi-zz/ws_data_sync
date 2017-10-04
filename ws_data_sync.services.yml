@@ -26,5 +26,5 @@ services:
 
   ws_data_sync.entity_dependants:
     class: Drupal\ws_data_sync\EntityDependants
-    arguments: ['@entity.query']
+    arguments: ['@entity.query', '@entity_type.manager']
 

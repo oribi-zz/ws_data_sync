@@ -1,7 +1,10 @@
 <?php
 
 namespace Drupal\ws_data_sync;
+
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\QueryFactory;
+use Drupal\Core\Url;
 
 /**
  * Class EntityDependants.
@@ -17,11 +20,18 @@ class EntityDependants {
    * @var \Drupal\Core\Entity\Query\QueryFactory
    */
   protected $entityQuery;
+
+  /**
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  private $entityTypeManager;
+
   /**
    * Constructs a new EntityDependants object.
    */
-  public function __construct(QueryFactory $entity_query) {
+  public function __construct(QueryFactory $entity_query, EntityTypeManagerInterface $entityTypeManager) {
     $this->entityQuery = $entity_query;
+    $this->entityTypeManager = $entityTypeManager;
   }
 
   /**
@@ -55,6 +65,19 @@ class EntityDependants {
 
   public function list() {
 
+  }
+
+  public function disableSourceFields(&$form, $dependant_type, $dependant_params, $elements) {
+    $dependants_list_url = Url::fromRoute('entity.' . $dependant_type . '.collection', $dependant_params)->getInternalPath();
+    $element_description = t(
+      'Field locked: Some <a href="/:field_mappings_list_link">@dependant_type</a> depend on this value', [
+        ':field_mappings_list_link'=> $dependants_list_url,
+        '@dependant_type' => $this->entityTypeManager->getDefinition($dependant_type)->getLowercasePluralLabel()]
+    );
+    foreach ($elements as $element) {
+      $form[$element]['#disabled'] = TRUE;
+      $form[$element]['#description'] = $element_description;
+    }
   }
 
 }

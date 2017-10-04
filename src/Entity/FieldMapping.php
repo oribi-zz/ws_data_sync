@@ -10,6 +10,7 @@ use Drupal\Core\Config\Entity\ConfigEntityBase;
  * @ConfigEntityType(
  *   id = "field_mapping",
  *   label = @Translation("Field Mapping"),
+ *   label_plural = @Translation("Field Mappings"),
  *   handlers = {
  *     "view_builder" = "Drupal\Core\Entity\EntityViewBuilder",
  *     "list_builder" = "Drupal\ws_data_sync\FieldMappingListBuilder",

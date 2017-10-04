@@ -5,6 +5,7 @@ namespace Drupal\ws_data_sync\Form;
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
+use Drupal\ws_data_sync\EntityDependants;
 use Drupal\ws_data_sync\EntityTypeMapper;
 use Drupal\ws_data_sync\Plugin\WebserviceAdapterManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -31,11 +32,17 @@ class FeedForm extends EntityForm {
   private $webservice;
 
   /**
+   * @var \Drupal\ws_data_sync\EntityDependants
+   */
+  private $dependants;
+
+  /**
    * @inheritDoc
    */
-  public function __construct(EntityTypeMapper $entityTypeMapper, WebserviceAdapterManager $webserviceAdapterManager) {
+  public function __construct(EntityTypeMapper $entityTypeMapper, WebserviceAdapterManager $webserviceAdapterManager, EntityDependants $dependants) {
     $this->entityTypeMapper = $entityTypeMapper;
     $this->webserviceAdapterManager = $webserviceAdapterManager;
+    $this->dependants = $dependants;
   }
 
   /**
@@ -44,7 +51,8 @@ class FeedForm extends EntityForm {
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('ws_data_sync.entity_type_mapper'),
-      $container->get('plugin.manager.ws_data_sync.ws_adapter')
+      $container->get('plugin.manager.ws_data_sync.ws_adapter'),
+      $container->get('ws_data_sync.entity_dependants')
     );
   }
 
@@ -78,34 +86,31 @@ class FeedForm extends EntityForm {
       '#disabled' => !$feed->isNew(),
     ];
 
-    // Todo: Lock/de-activate this field if feed has field mappings
     $form['local'] = [
       '#type' => 'select',
       '#title' => $this->t('Local entity'),
       '#options' => ['' => t('- Select -')] + $type_options,
       '#default_value' => is_array($feed->getLocal()) ? self::toOption($feed->getLocal()) : '',
       '#required' => TRUE,
+      '#description' => t('Which <em>drupal entity</em> should this feed be mapped to?'),
     ];
 
     /** @var \Drupal\ws_data_sync\Plugin\WebserviceAdapter\SpaceX $webservice_type_plugin */
     $webservice_type_plugin = $this->webserviceAdapterManager->createInstance($this->webservice->ws_type());
 
-    // Todo: Lock/de-activate this field if feed has field mappings
     $form['endpoint'] = [
       '#type' => 'select',
       '#title' => $this->t('Endpoint'),
       '#options' => $webservice_type_plugin->getEndpoints(),
       '#default_value' => $feed->getEndpoint(),
       '#required' => TRUE,
+      '#description' => t('Which <em>remote resource</em> should this feed be mapped to?'),
     ];
 
-//    // todo: move this to save method (if isNew)
-//    $form['webservice'] = [
-//      '#type' => 'textfield',
-//      '#title' => $this->t('Webservice'),
-//      '#default_value' => $this->webservice->id(),
-//      '#required' => TRUE,
-//    ];
+    $dependant_params = ['webservice' => $this->webservice->id(), 'feed' => $feed->id()];
+    if ($this->dependants->hasDependants('field_mapping',$dependant_params)) {
+      $this->dependants->disableSourceFields($form,'field_mapping', $dependant_params, ['local', 'endpoint']);
+    }
 
     // Todo: create common method for rewriting delete route
     $form['actions']['delete']['#url'] = Url::fromRoute('entity.feed.delete_form', [

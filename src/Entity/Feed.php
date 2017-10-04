@@ -11,6 +11,7 @@ use Drupal\ws_data_sync\Form\ComplexKeyFormatterTrait;
  * @ConfigEntityType(
  *   id = "feed",
  *   label = @Translation("Feed"),
+ *   label_plural = @Translation("Feeds"),
  *   handlers = {
  *     "view_builder" = "Drupal\Core\Entity\EntityViewBuilder",
  *     "list_builder" = "Drupal\ws_data_sync\FeedListBuilder",
