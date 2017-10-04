@@ -4,13 +4,39 @@ namespace Drupal\ws_data_sync;
 
 use Drupal\Core\Config\Entity\ConfigEntityListBuilder;
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\Core\Entity\Query\QueryInterface;
+use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Url;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Provides a listing of Webservice entities.
  */
 class WebserviceListBuilder extends ConfigEntityListBuilder {
+
+  /**
+   * @var \Drupal\ws_data_sync\EntityDependants
+   */
+  private $dependants;
+
+  /**
+   * @inheritDoc
+   */
+  public function __construct(EntityTypeInterface $entity_type, EntityStorageInterface $storage, EntityDependants $dependants) {
+    parent::__construct($entity_type, $storage);
+    $this->dependants = $dependants;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function createInstance(ContainerInterface $container, EntityTypeInterface $entity_type) {
+    return new static(
+      $entity_type,
+      $container->get('entity.manager')->getStorage($entity_type->id()),
+      $container->get('ws_data_sync.entity_dependants')
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -28,17 +54,12 @@ class WebserviceListBuilder extends ConfigEntityListBuilder {
    * {@inheritdoc}
    */
   public function buildRow(EntityInterface $entity) {
-    $feed_count = \Drupal::entityQuery('feed')
-      ->condition('webservice', $entity->id())
-      ->count()
-      ->execute();
 
     $row['label'] = $entity->label();
 //    $row['id'] = $entity->id();
     $row['type'] = $entity->ws_type();
     $row['authentication'] = $entity->ws_authentication()['type'] ?: 'none';
-    $row['feeds'] = $feed_count;
-    // You probably want a few more properties here...
+    $row['feeds'] = $this->dependants->count('feed', ['webservice' => $entity->id()]);
     return $row + parent::buildRow($entity);
   }
 
@@ -47,12 +68,7 @@ class WebserviceListBuilder extends ConfigEntityListBuilder {
 
     unset($operations['translate']);
 
-    $feed_count = \Drupal::entityQuery('feed')
-      ->condition('webservice', $entity->id())
-      ->count()
-      ->execute();
-
-    if ($feed_count > 0) {
+    if ($this->dependants->hasDependants('feed', ['webservice' => $entity->id()])) {
       $operations['manage_feeds'] = [
         'title' => t('Manage feeds'),
         'weight' => 0,
