@@ -109,6 +109,15 @@ class FieldMapping extends ConfigEntityBase implements FieldMappingInterface {
     return $this->feed;
   }
 
+  /**
+   * @inheritDoc
+   */
+  public function calculateDependencies() {
+    parent::calculateDependencies();
+    $this->addDependency('config', 'ws_data_sync.webservice.' . $this->webservice);
+    $this->addDependency('config', 'ws_data_sync.feed.' . $this->feed);
+    return $this;
+  }
 
 
 }

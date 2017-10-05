@@ -3,15 +3,14 @@
 namespace Drupal\ws_data_sync\Form;
 
 use Drupal\Core\Entity\EntityConfirmFormBase;
+use Drupal\Core\Entity\EntityDeleteForm;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 
 /**
  * Builds the form to delete Webservice entities.
  */
-class WebserviceDeleteForm extends EntityConfirmFormBase {
-
-  // Todo: Add check if this webservice contains feeds and/or field mappings
+class WebserviceDeleteForm extends EntityDeleteForm {
 
   /**
    * {@inheritdoc}

@@ -128,7 +128,7 @@ class FeedForm extends EntityForm {
     $feed = $this->entity;
 
     if ($feed->isNew()) {
-      $feed->setWebservice($this->webserivce);
+      $feed->setWebservice($this->webservice);
     }
 
     // Massage colon separated 'local' value to array for structured config storage

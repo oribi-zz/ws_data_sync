@@ -68,16 +68,20 @@ class EntityDependants {
   }
 
   public function disableSourceFields(&$form, $dependant_type, $dependant_params, $elements) {
-    $dependants_list_url = Url::fromRoute('entity.' . $dependant_type . '.collection', $dependant_params)->getInternalPath();
-    $element_description = t(
-      'Field locked: Some <a href="/:field_mappings_list_link">@dependant_type</a> depend on this value', [
-        ':field_mappings_list_link'=> $dependants_list_url,
-        '@dependant_type' => $this->entityTypeManager->getDefinition($dependant_type)->getLowercasePluralLabel()]
+    $element_description = t('Field locked: Some <a href="/:field_mappings_list_link">@dependant_type</a> depend on this value', [
+        ':field_mappings_list_link' => $this->dependantsListUrl($dependant_type, $dependant_params),
+        '@dependant_type' => $this->entityTypeManager->getDefinition($dependant_type)
+          ->getPluralLabel(),
+      ]
     );
     foreach ($elements as $element) {
       $form[$element]['#disabled'] = TRUE;
       $form[$element]['#description'] = $element_description;
     }
+  }
+
+  protected function dependantsListUrl($dependant_type, $dependant_params) {
+    return Url::fromRoute('entity.' . $dependant_type . '.collection', $dependant_params)->getInternalPath();
   }
 
 }

@@ -110,6 +110,14 @@ class Feed extends ConfigEntityBase implements FeedInterface {
     $this->webservice = $webservice;
   }
 
+  /**
+   * @inheritDoc
+   */
+  public function calculateDependencies() {
+    parent::calculateDependencies();
+    $this->addDependency('config', 'ws_data_sync.webservice.' . $this->webservice);
+    return $this;
+  }
 
 
 }
