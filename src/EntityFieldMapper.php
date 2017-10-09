@@ -60,7 +60,6 @@ class EntityFieldMapper {
   public function getEntityFields($type, $bundle) {
     $fields = [];
     foreach ($this->entityFieldManager->getFieldDefinitions($type, $bundle) as $id => $definition) {
-//      dpm($id);
       if (!in_array($id, $this->excluded_fields)) {
         $fields[$id] = $definition->getLabel();
       }

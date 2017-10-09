@@ -1,13 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Peter
- * Date: 13-09-2017
- * Time: 01:29
- */
 
 namespace Drupal\ws_data_sync\Form;
-
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\ws_data_sync\Entity\Feed;

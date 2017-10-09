@@ -1,13 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Peter
- * Date: 12-09-2017
- * Time: 12:56
- */
 
 namespace Drupal\ws_data_sync\Plugin\AuthenticationAdapter;
-
 
 use Drupal\ws_data_sync\Plugin\AuthenticationAdapterBase;
 
