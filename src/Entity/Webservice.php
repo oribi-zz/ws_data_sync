@@ -30,7 +30,6 @@ use Drupal\Core\Config\Entity\ConfigEntityBase;
  *     "uuid" = "uuid"
  *   },
  *   links = {
- *     "canonical" = "/admin/config/services/data-sync/webservice/{webservice}",
  *     "add-form" = "/admin/config/services/data-sync/webservice/add",
  *     "edit-form" = "/admin/config/services/data-sync/webservice/{webservice}/edit",
  *     "delete-form" = "/admin/config/services/data-sync/webservice/{webservice}/delete",

@@ -31,7 +31,6 @@ use Drupal\Core\Config\Entity\ConfigEntityBase;
  *     "uuid" = "uuid"
  *   },
  *   links = {
- *     "canonical" = "/admin/config/services/data-sync/field-mapping/{webservice}/{feed}/{field_mapping}",
  *     "add-form" = "/admin/config/services/data-sync/{webservice}/{feed}/fieldmapping/add",
  *     "edit-form" = "/admin/config/services/data-sync/{webservice}/{feed}/{field_mapping}/edit",
  *     "delete-form" = "/admin/config/services/data-sync/{webservice}/{feed}/{field_mapping}/delete",
