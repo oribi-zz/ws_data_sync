@@ -66,7 +66,7 @@ class FeedForm extends EntityForm {
     $this->webservice = $request->get('webservice');
 
 
-    /** @var \Drupal\ws_data_sync\Entity\feed $feed */
+    /** @var \Drupal\ws_data_sync\Entity\Feed $feed */
     $feed = $this->entity;
     $form['label'] = [
       '#type' => 'textfield',

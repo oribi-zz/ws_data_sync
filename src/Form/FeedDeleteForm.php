@@ -2,7 +2,6 @@
 
 namespace Drupal\ws_data_sync\Form;
 
-use Drupal\Core\Entity\EntityConfirmFormBase;
 use Drupal\Core\Entity\EntityDeleteForm;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
