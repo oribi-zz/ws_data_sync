@@ -15,9 +15,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class FeedListBuilder extends ConfigEntityListBuilder {
 
   /**
-   * @var \Symfony\Component\HttpFoundation\Request
+   * @var \Drupal\ws_data_sync\Entity\WebserviceInterface
    */
-  protected $request;
+  private $webservice;
 
   /**
    * @var \Drupal\ws_data_sync\EntityDependants
@@ -26,7 +26,7 @@ class FeedListBuilder extends ConfigEntityListBuilder {
 
   public function __construct(EntityTypeInterface $entity_type, EntityStorageInterface $storage, EntityDependants $dependants) {
     parent::__construct($entity_type, $storage);
-    $this->request = \Drupal::request();
+    $this->webservice = \Drupal::request()->get('webservice');
     $this->dependants = $dependants;
   }
 
@@ -73,7 +73,7 @@ class FeedListBuilder extends ConfigEntityListBuilder {
 
   public function load() {
     return $this->getStorage()->loadByProperties([
-      'webservice' => $this->request->get('webservice')
+      'webservice' => $this->webservice->id()
     ]);
   }
 

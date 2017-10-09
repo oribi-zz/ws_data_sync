@@ -14,18 +14,24 @@ use Drupal\Core\Entity\EntityTypeInterface;
 class FieldMappingListBuilder extends ConfigEntityListBuilder {
 
   /**
-   * @var \Symfony\Component\HttpFoundation\Request
+   * @var \Drupal\ws_data_sync\Entity\WebserviceInterface
    */
-  protected $request;
+  private $webservice;
+
+  /**
+   * @var \Drupal\ws_data_sync\Entity\FeedInterface
+   */
+  private $feed;
 
   /**
    * @inheritDoc
    */
   public function __construct(EntityTypeInterface $entity_type, EntityStorageInterface $storage) {
     parent::__construct($entity_type, $storage);
-    $this->request = \Drupal::request();
+    $request = \Drupal::request();
+    $this->webservice = $request->get('webservice');
+    $this->feed = $request->get('feed');
   }
-
 
   /**
    * {@inheritdoc}
@@ -47,7 +53,6 @@ class FieldMappingListBuilder extends ConfigEntityListBuilder {
     $row['webservice'] = $entity->getWebservice();
     $row['feed'] = $entity->getFeed();
 
-    // You probably want a few more properties here...
     return $row + parent::buildRow($entity);
   }
 
@@ -56,8 +61,8 @@ class FieldMappingListBuilder extends ConfigEntityListBuilder {
    */
   public function load() {
     return $this->getStorage()->loadByProperties([
-      'webservice' => $this->request->get('webservice'),
-      'feed' => $this->request->get('feed')
+      'webservice' => $this->webservice->id(),
+      'feed' => $this->feed->id()
     ]);
   }
 
@@ -69,8 +74,8 @@ class FieldMappingListBuilder extends ConfigEntityListBuilder {
       'title' => $this->t('Edit'),
       'weight' => 10,
       'url' => Url::fromRoute('entity.field_mapping.edit_form', [
-        'webservice' => $this->request->get('webservice'),
-        'feed' => $this->request->get('feed'),
+        'webservice' => $this->webservice->id(),
+        'feed' => $this->feed->id(),
         'field_mapping' => $entity->id(),
       ]),
     ];
@@ -79,8 +84,8 @@ class FieldMappingListBuilder extends ConfigEntityListBuilder {
       'title' => $this->t('Delete'),
       'weight' => 10,
       'url' => Url::fromRoute('entity.field_mapping.delete_form', [
-        'webservice' => $this->request->get('webservice'),
-        'feed' => $this->request->get('feed'),
+        'webservice' => $this->webservice->id(),
+        'feed' => $this->feed->id(),
         'field_mapping' => $entity->id(),
       ]),
     ];
