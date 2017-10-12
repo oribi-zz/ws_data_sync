@@ -2,8 +2,7 @@
 
 namespace Drupal\ws_data_sync\Form;
 
-use Drupal\Core\Entity\EntityInterface;
-use Drupal\ws_data_sync\Entity\Feed;
+use Drupal\Core\Entity\EntityTypeInterface;
 
 /**
  * Trait ComplexKeyFormatterTrait
@@ -40,10 +39,9 @@ trait ComplexKeyFormatterTrait {
     return $array;
   }
 
-  protected function getConfigPropertySequenceMappingKeys(string $property, string $entity_type) {
-//    $entity->getTypedData()->getProperties();
-//    $entity_schema_id = $entity->getSchemaIdentifier();
-    $entity_definition = \Drupal::service('config.typed')->getDefinition('ws_data_sync.' . $entity_type . '.*');
+  protected function getConfigPropertySequenceMappingKeys(string $property, EntityTypeInterface $entity_type) {
+    $plugin_id = $entity_type->getProvider() . '.' . $entity_type->id() . '.*';
+    $entity_definition = \Drupal::service('config.typed')->getDefinition($plugin_id);
     return array_keys($entity_definition['mapping'][$property]['sequence']['mapping']);
   }
 

@@ -65,9 +65,9 @@ class FeedForm extends EntityForm {
     /** @var \Drupal\ws_data_sync\Entity\Webservice $webservice */
     $this->webservice = $request->get('webservice');
 
-
     /** @var \Drupal\ws_data_sync\Entity\Feed $feed */
     $feed = $this->entity;
+
     $form['label'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Label'),
@@ -128,11 +128,11 @@ class FeedForm extends EntityForm {
     $feed = $this->entity;
 
     if ($feed->isNew()) {
-      $feed->setWebservice($this->webservice);
+      $feed->setWebservice($this->webservice->id());
     }
 
     // Massage colon separated 'local' value to array for structured config storage
-    $keys = self::getConfigPropertySequenceMappingKeys('local', $feed->getEntityTypeId());
+    $keys = self::getConfigPropertySequenceMappingKeys('local', $feed->getEntityType());
     if (count($keys) == count(explode(':', $form_state->getValue('local')))) {
       $local = self::toArray($form_state->getValue('local'), $keys);
       $status = $feed->set('local', $local)->save();
