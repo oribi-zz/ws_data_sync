@@ -30,7 +30,7 @@ class BreadcrumbBuilder extends PathBasedBreadcrumbBuilder {
   private $feed;
 
   /** @var \Drupal\ws_data_sync\Entity\FieldMappingInterface */
-  private $field_mapping;
+  private $fieldMapping;
 
   /**
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
@@ -54,7 +54,7 @@ class BreadcrumbBuilder extends PathBasedBreadcrumbBuilder {
     parent::__construct($context, $access_manager, $router, $path_processor, $config_factory, $title_resolver, $current_user, $current_path);
     $this->webservice = $entity_manager->getStorage('webservice');
     $this->feed = $entity_manager->getStorage('feed');
-    $this->field_mapping = $entity_manager->getStorage('field_mapping');
+    $this->fieldMapping = $entity_manager->getStorage('field_mapping');
     $this->entityManager = $entity_manager;
   }
 
@@ -64,7 +64,7 @@ class BreadcrumbBuilder extends PathBasedBreadcrumbBuilder {
   public function applies(RouteMatchInterface $route_match) {
     return in_array($route_match->getRouteName(), $this->affectedRoutes($this->webservice->getEntityType()))
       || in_array($route_match->getRouteName(), $this->affectedRoutes($this->feed->getEntityType()))
-      || in_array($route_match->getRouteName(), $this->affectedRoutes($this->field_mapping->getEntityType()));
+      || in_array($route_match->getRouteName(), $this->affectedRoutes($this->fieldMapping->getEntityType()));
   }
 
   /**
@@ -79,14 +79,14 @@ class BreadcrumbBuilder extends PathBasedBreadcrumbBuilder {
     if (in_array($route_match->getRouteName(), array_merge(
       $this->affectedRoutes($this->webservice->getEntityType(), FALSE),
       $this->affectedRoutes($this->feed->getEntityType()),
-      $this->affectedRoutes($this->field_mapping->getEntityType())
+      $this->affectedRoutes($this->fieldMapping->getEntityType())
     ))) {
       $breadcrumb->addLink(Link::createFromRoute($this->t('Data sync'), 'entity.webservice.collection'));
     }
 
     if (in_array($route_match->getRouteName(), array_merge(
       $this->affectedRoutes($this->feed->getEntityType(), FALSE),
-      $this->affectedRoutes($this->field_mapping->getEntityType())
+      $this->affectedRoutes($this->fieldMapping->getEntityType())
     ))) {
       $webservice = $route_match->getParameter('webservice');
       $breadcrumb->addLink(Link::createFromRoute(
@@ -96,7 +96,7 @@ class BreadcrumbBuilder extends PathBasedBreadcrumbBuilder {
       ));
     }
 
-    if (in_array($route_match->getRouteName(), $this->affectedRoutes($this->field_mapping->getEntityType(), FALSE))) {
+    if (in_array($route_match->getRouteName(), $this->affectedRoutes($this->fieldMapping->getEntityType(), FALSE))) {
       $webservice = $route_match->getParameter('webservice');
       $feed = $route_match->getParameter('feed');
       $breadcrumb->addLink(Link::createFromRoute(
@@ -124,9 +124,14 @@ class BreadcrumbBuilder extends PathBasedBreadcrumbBuilder {
       if (!$include_collection) {
         unset($routes['entity.' . $entity_type->id() . '.collection']);
       }
+
+      // Todo: Find out why feed collection route shows up in field mappings routes array
+      // Workaround to remove field mapping breadcrumb from feeds collection page
+      if ($entity_type->id() == 'field_mapping') {
+        unset($routes['entity.feed.collection']);
+      }
       $route_names += array_keys($routes);
     }
-
     return $route_names;
   }
 

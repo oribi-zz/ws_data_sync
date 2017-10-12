@@ -16,28 +16,19 @@ class RouteSubscriber extends RouteSubscriberBase {
    * {@inheritdoc}
    */
   protected function alterRoutes(RouteCollection $collection) {
+    $entity_type_manager = \Drupal::service('entity_type.manager');
+    $parameters = [];
+    foreach (['feed', 'field_mapping'] as $entity_type) {
+      foreach ($entity_type_manager->getDefinition($entity_type)->get('ancestors') as $ancestor) {
+        $parameters[$ancestor] = ['type' => 'entity:'. $ancestor];
+      }
 
-    $entity_form_route_parameters = [
-      'webservice' => ['type' => 'entity:webservice'],
-      'feed' => ['type' => 'entity:feed'],
-      'field_mapping' => ['type' => 'entity:field_mapping'],
-    ];
-
-    foreach (['entity.feed.add_form', 'entity.feed.edit_form', 'entity.feed.delete_form'] as $route_name) {
-      $route = $collection->get($route_name);
-//      $route->setOption('parameters', [
-//        'webservice' => $entity_form_route_parameters['webservice'],
-//        'feed' => $entity_form_route_parameters['feed'],
-//      ]);
-      $route->setOption('parameters', $entity_form_route_parameters);
-      $collection->add($route_name, $route);
+      // Todo: find way to generate entity route array dynamically
+      foreach (['entity.'. $entity_type . '.collection', 'entity.'. $entity_type .'.add_form', 'entity.'. $entity_type .'.edit_form', 'entity.'. $entity_type .'.delete_form'] as $route_name) {
+        $route = $collection->get($route_name);
+        $route->setOption('parameters', $parameters);
+        $collection->add($route_name, $route);
+      }
     }
-
-    foreach (['entity.field_mapping.add_form', 'entity.field_mapping.edit_form', 'entity.field_mapping.delete_form'] as $route_name) {
-      $route = $collection->get($route_name);
-      $route->setOption('parameters', $entity_form_route_parameters);
-      $collection->add($route_name, $route);
-    }
-
   }
 }
