@@ -90,9 +90,12 @@ class FeedForm extends EntityForm {
       '#type' => 'select',
       '#title' => $this->t('Local entity'),
       '#options' => ['' => t('- Select -')] + $type_options,
-      '#default_value' => is_array($feed->getLocal()) ? self::toOption($feed->getLocal()) : '',
+      '#default_value' => is_array($feed->getLocal())
+        ? self::convertSequencedPropertyToString($feed->getLocal())
+        : '',
       '#required' => TRUE,
       '#description' => t('Which <em>drupal entity</em> should this feed be mapped to?'),
+      '#complex' => TRUE,
     ];
 
     /** @var \Drupal\ws_data_sync\Plugin\WebserviceAdapter\SpaceX $webservice_type_plugin */
@@ -131,14 +134,9 @@ class FeedForm extends EntityForm {
       $feed->setWebservice($this->webservice->id());
     }
 
-    // Massage colon separated 'local' value to array for structured config storage
-    $keys = self::getConfigPropertySequenceMappingKeys('local', $feed->getEntityType());
-    if (count($keys) == count(explode(':', $form_state->getValue('local')))) {
-      $local = self::toArray($form_state->getValue('local'), $keys);
-      $status = $feed->set('local', $local)->save();
-    } else {
-      drupal_set_message($this->t('Unmatched parameters'), 'error');
-    }
+    $set_complex_values = self::setComplexValues($feed, $form, $form_state);
+
+    $status = $feed->save();
 
     switch ($status) {
       case SAVED_NEW:
