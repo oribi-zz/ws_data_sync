@@ -38,9 +38,7 @@ use Drupal\Core\Config\Entity\ConfigEntityBase;
  *   }
  * )
  */
-class Webservice extends ConfigEntityBase implements WebserviceInterface {
-
-  protected $schemaId = 'ws_data_sync.webservice.*';
+class Webservice extends ConfigEntityBase {
 
   /**
    * The Webservice ID.
@@ -63,14 +61,10 @@ class Webservice extends ConfigEntityBase implements WebserviceInterface {
    */
   protected $type;
 
-  protected $format;
-
   /**
-   * @return mixed
+   * @var
    */
-  public function getFormat() {
-    return $this->format;
-  }
+  protected $format;
 
   /**
    * The Webservice url.
@@ -92,17 +86,24 @@ class Webservice extends ConfigEntityBase implements WebserviceInterface {
   protected $documentation_link;
 
   /**
-   * @return null|string
-   */
-  public function getDocumentationLink() {
-    return $this->documentation_link;
-  }
-
-  /**
    * @return string
    */
   public function ws_type() {
     return $this->type;
+  }
+
+  /**
+   * @return mixed
+   */
+  public function getFormat() {
+    return $this->format;
+  }
+
+  /**
+   * @return null|string
+   */
+  public function getDocumentationLink() {
+    return $this->documentation_link;
   }
 
   /**
@@ -117,11 +118,6 @@ class Webservice extends ConfigEntityBase implements WebserviceInterface {
    */
   public function ws_authentication() {
     return $this->authentication;
-  }
-
-  /** @return string */
-  public function getSchemaIdentifier() {
-    return $this->schemaId;
   }
 
 }

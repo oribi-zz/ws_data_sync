@@ -20,7 +20,7 @@ use Drupal\Core\Config\Entity\ConfigEntityBase;
  *       "delete" = "Drupal\ws_data_sync\Form\FieldMappingDeleteForm"
  *     },
  *     "route_provider" = {
- *       "html" = "Drupal\ws_data_sync\FieldMappingHtmlRouteProvider",
+ *       "html" = "Drupal\ws_data_sync\HtmlRouteProvider",
  *     },
  *   },
  *   config_prefix = "field_mapping",
@@ -31,14 +31,18 @@ use Drupal\Core\Config\Entity\ConfigEntityBase;
  *     "uuid" = "uuid"
  *   },
  *   links = {
- *     "add-form" = "/admin/config/services/data-sync/{webservice}/{feed}/fieldmapping/add",
+ *     "add-form" = "/admin/config/services/data-sync/{webservice}/{feed}/field-mapping/add",
  *     "edit-form" = "/admin/config/services/data-sync/{webservice}/{feed}/{field_mapping}/edit",
  *     "delete-form" = "/admin/config/services/data-sync/{webservice}/{feed}/{field_mapping}/delete",
- *     "collection" = "/admin/config/services/data-sync/{webservice}/{feed}/fieldmappings"
+ *     "collection" = "/admin/config/services/data-sync/{webservice}/{feed}/field-mappings"
+ *   },
+ *   ancestors = {
+ *     "webservice",
+ *     "feed"
  *   }
  * )
  */
-class FieldMapping extends ConfigEntityBase implements FieldMappingInterface {
+class FieldMapping extends ConfigEntityBase {
 
   /**
    * The Field Mapping ID.
@@ -74,10 +78,10 @@ class FieldMapping extends ConfigEntityBase implements FieldMappingInterface {
   protected $local;
 
   /**
-   * @return mixed
+   * @return string
    */
-  public function getLocal() {
-    return $this->local;
+  public function getWebservice(): string {
+    return $this->webservice;
   }
 
   /**
@@ -97,15 +101,15 @@ class FieldMapping extends ConfigEntityBase implements FieldMappingInterface {
   /**
    * @return string
    */
-  public function getWebservice(): string {
-    return $this->webservice;
+  public function getFeed(): string {
+    return $this->feed;
   }
 
   /**
-   * @return string
+   * @return mixed
    */
-  public function getFeed(): string {
-    return $this->feed;
+  public function getLocal() {
+    return $this->local;
   }
 
   /**
@@ -117,6 +121,5 @@ class FieldMapping extends ConfigEntityBase implements FieldMappingInterface {
     $this->addDependency('config', 'ws_data_sync.feed.' . $this->feed);
     return $this;
   }
-
 
 }
