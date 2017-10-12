@@ -10,9 +10,18 @@ ws_data_sync.field_mapping.*:
       label: 'Label'
     uuid:
       type: string
-    local:
-      type: string
-      label: 'Local'
+    local_field:
+      type: sequence
+      label: 'Local field'
+      sequence:
+        type: mapping
+        mapping:
+          type:
+            type: string
+            label: Field type
+          name:
+            type: string
+            label: Machine name
     feed:
       type: string
       label: 'Feed'

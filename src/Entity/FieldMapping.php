@@ -73,9 +73,9 @@ class FieldMapping extends ConfigEntityBase {
   protected $feed;
 
   /**
-   * @var
+   * @var array
    */
-  protected $local;
+  protected $local_field;
 
   /**
    * @return string
@@ -106,10 +106,10 @@ class FieldMapping extends ConfigEntityBase {
   }
 
   /**
-   * @return mixed
+   * @return array
    */
-  public function getLocal() {
-    return $this->local;
+  public function getLocalField() {
+    return $this->local_field;
   }
 
   /**

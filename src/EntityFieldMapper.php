@@ -59,9 +59,13 @@ class EntityFieldMapper {
 
   public function getEntityFields($type, $bundle) {
     $fields = [];
+    /**
+     * @var string $id
+     * @var \Drupal\field\Entity\FieldConfig|\Drupal\Core\Field\BaseFieldDefinition $definition
+     */
     foreach ($this->entityFieldManager->getFieldDefinitions($type, $bundle) as $id => $definition) {
       if (!in_array($id, $this->excluded_fields)) {
-        $fields[$id] = $definition->getLabel();
+        $fields[$definition->getType() . ':' . $id] = $definition->getLabel();
       }
     }
     return $fields;

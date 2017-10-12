@@ -17,6 +17,8 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class FieldMappingForm extends EntityForm {
 
+  use ComplexKeyFormatterTrait;
+
   /**
    * @var \Drupal\ws_data_sync\Entity\WebserviceInterface
    */
@@ -52,7 +54,7 @@ class FieldMappingForm extends EntityForm {
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state, Request $request = null) {
+  public function buildForm(array $form, FormStateInterface $form_state, Request $request = NULL) {
     $form = parent::buildForm($form, $form_state);
 
     /** @var \Drupal\ws_data_sync\Entity\Feed $feed */
@@ -87,11 +89,15 @@ class FieldMappingForm extends EntityForm {
       $this->feed->getLocal()['bundle']
     );
 
-    $form['local'] = [
+    $form['local_field'] = [
       '#type' => 'select',
       '#title' => $this->t('Local entity field'),
       '#description' => $this->t('Which field should the remote data be mapped to'),
       '#options' => $entity_fields,
+      '#default_value' => is_array($field_mapping->getLocalField())
+        ? self::convertSequencedPropertyToString($field_mapping->getLocalField())
+        : '',
+      '#complex' => TRUE,
     ];
 
     // Todo: create common method for rewriting delete route
@@ -114,6 +120,9 @@ class FieldMappingForm extends EntityForm {
       $field_mapping->setWebservice($this->webservice->id());
       $field_mapping->setFeed($this->feed->id());
     }
+
+    $set_complex_values = self::setComplexValues($field_mapping, $form, $form_state);
+
     $status = $field_mapping->save();
 
     switch ($status) {
@@ -125,15 +134,16 @@ class FieldMappingForm extends EntityForm {
 
       default:
         drupal_set_message($this->t('Saved the %webservice %label Field Mapping.', [
+          '%webservice' => $this->webservice->label(),
           '%label' => $field_mapping->label(),
         ]));
     }
 
     $feed_field_mapping_list = Url::fromRoute(
       'entity.field_mapping.collection', [
-        'webservice' => $this->webservice->id(),
-        'feed' => $this->feed->id()
-      ]);
+      'webservice' => $this->webservice->id(),
+      'feed' => $this->feed->id(),
+    ]);
     $form_state->setRedirectUrl($feed_field_mapping_list);
   }
 
