@@ -1,0 +1,7 @@
+non_mappable_entities:
+  - comment
+  - contact_message
+  - block_content
+  - menu_link_content
+  - file
+  - shortcut

@@ -1,2 +1,7 @@
-route_callbacks:
-  - '\Drupal\ws_data_sync\Routing\FeedRoutes::routes'
+ws_data_sync.admin_settings:
+  path: '/admin/config/services/data-sync/settings'
+  defaults:
+    _form: '\Drupal\ws_data_sync\Form\SettingsForm'
+    _title: 'Data sync settings'
+  requirements:
+    _permission: 'administer site configuration'
